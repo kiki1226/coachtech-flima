@@ -1,0 +1,48 @@
+
+.login-container {
+    background-color: #fff;
+    text-align: center;
+    padding: 80px 20px;
+    max-width: 600px;
+    margin: 80px auto;
+    border-radius: 8px;
+}
+
+form {
+    width: 100%;
+    text-align: center;
+}
+.message {
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+
+}
+.button {
+    background-color: #ccc;
+    color: #000;
+    padding: 12px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 30px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.button:hover {
+    background-color: #bbb;
+}
+
+.resend-link {
+    text-align: center;
+    display: block;
+    margin-top: 20px;
+}
+.resend-button{
+    color: #0073CC;
+    text-decoration: underline;
+}

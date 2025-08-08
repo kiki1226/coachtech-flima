@@ -1,0 +1,53 @@
+.page-title {
+    text-align: center;
+    font-size: 24px;
+    margin: 30px 0;
+}
+
+.confirm-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.confirm-wrapper p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.confirm-wrapper ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px;
+}
+
+.confirm-wrapper li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+}
+
+.confirm-wrapper li:last-child {
+    border-bottom: none;
+}
+
+.confirm-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #ff6b6b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.confirm-btn:hover {
+    background: #ff4b4b;
+}

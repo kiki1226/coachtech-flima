@@ -1,0 +1,50 @@
+.page-title {
+    text-align: center;
+    font-size: 24px;
+    margin: 50px 0 30px;
+}
+
+.complete-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.thanks-message {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.thanks-sub {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.btn-area {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.back-btn,
+.mypage-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #ff6b6b;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.back-btn:hover,
+.mypage-btn:hover {
+    background: #ff4b4b;
+}

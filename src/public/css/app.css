@@ -1,0 +1,118 @@
+/* --- 共通リセット＆設定 --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Arial", sans-serif;
+}
+
+body {
+    width: 100%;
+    background-color: #F8F8F8;
+}
+
+/* --- ヘッダー --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+}
+
+/* --- ロゴ --- */
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* --- 検索フォーム --- */
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    width: 500px;
+}
+
+.search-form input {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    width: 300px;
+}
+
+/* --- ナビゲーション（右側） --- */
+.header-nav {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.header-nav-button {
+    color: white;
+    background-color: black;
+    font-size: 17px;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.header-nav-button:hover {
+    opacity: 0.8;
+}
+
+/* --- ボタン（白ベース） --- */
+.nav-button-syutten,
+.nav-button-search {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.nav-button-search {
+    width: 100px;
+}
+main {
+    background-color: white;
+}
+/* --- 汎用ボタン（黒ベース） --- */
+.nav-button {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    margin: 0 5px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-button:hover {
+    background-color: #333;
+}
+
+/* --- ログアウトフォーム --- */
+.logout-form {
+    display: inline-block;
+}
+/* --- ヘッダーリンク --- */
+.header-link {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.header-link:hover {
+    text-decoration: underline;
+}

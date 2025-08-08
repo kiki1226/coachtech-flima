@@ -1,0 +1,258 @@
+/* --------------------
+パン屑リスト
+-----------------------*/
+.breadcrumb {
+    margin: 10px 0 20px 0;
+    padding-left: 20px;
+    color: #555;
+}
+.breadcrumb a {
+    text-decoration: none;
+    color: #0dc4f7;
+}
+.product-detail-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 40px;
+    padding: 0 100px;
+}
+/* --------------------
+商品の出品タイトル
+-----------------------*/
+.form-wrapper {
+    max-width: 600px;
+    margin: auto;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+/* ----------------------
+プレビュー画像の枠
+------------------------*/
+.image-upload-box {
+    width: 300px;
+    height: 200px;
+    border: 1px dashed #aaa;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    padding: 40px;
+    text-align: center;
+}
+
+.carousel-preview-box {
+    width: 250px;
+    height: 250px;
+    margin: 10px auto;
+    border: 2px dashed #807d7d;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+#carousel-preview-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+}
+
+.image-preview {
+    height: auto;
+    width: auto;
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.form-group-current-image {
+    margin-bottom: 25px;
+    display: flex;
+}
+
+/*-------------------------------
+ 全体のスタイル
+------------------------------*/
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-subtitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #5F5F5F;
+    border-bottom: #ccc 1px solid;
+    margin-top: 30px;
+}
+
+.form-label {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: unset;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/*-------------------------------
+ ファイル選択部分を完全非表示
+------------------------------*/
+.hidden-file {
+    display: none;
+}
+
+/*-------------------------------
+ 赤いボタンのスタイル
+------------------------------*/
+.image-upload-label {
+    margin: 10px auto 0 200px;
+    display: inline-block;
+    background-color: #e60033;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.image-upload-label:hover {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+/*-------------------------------
+ カテゴリースタイル（複数選択対応）
+------------------------------*/
+.category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.category-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e60033;
+    border-radius: 20px;
+    color: #e60033;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.category-tag span {
+    display: inline-block;
+    padding: 6px 12px;
+}
+
+/* チェックされた場合のスタイル（複数選択対応） */
+.category-tag input[type="checkbox"]:checked+span {
+    background-color: #e60033;
+    color: #fff;
+    border-radius: 20px;
+}
+
+/*-------------------------------
+ サブミットスタイル
+------------------------------*/
+.submit-button {
+    background-color: #ff4d4d;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #e53e3e;
+}
+
+.center {
+    text-align: center;
+}
+
+#preview-box {
+    margin-top: 10px;
+}
+
+#preview-img {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 5px;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 5px;
+}
+
+.carousel-dots span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.carousel-dots span.active {
+    background-color: #e60033;
+}
+/*-------------------------------
+エラーメッセージのスタイル
+------------------------------*/
+.validation-errors {
+    background-color: #ffe6e6;
+    color: #d60000;
+    border: 1px solid #d60000;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+}
+
+.validation-errors ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+.text-danger {
+    color: #d60000;
+    margin-top: 5px;
+    text-align: right;
+}

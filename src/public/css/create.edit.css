@@ -1,0 +1,393 @@
+/* ==============================
+   パン屑リスト
+   ============================== */
+.breadcrumb {
+    margin: 10px 0 20px 0;
+    padding-left: 20px;
+    color: #555;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #0dc4f7;
+}
+
+.product-detail-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 40px;
+    padding: 0 100px;
+}
+
+
+/* ==============================
+   商品編集フォームスタイル
+   ============================== */
+.form-wrapper {
+    max-width: 600px;
+    margin: auto;
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+/* ==============================
+   画像編集フォームスタイル
+   ============================== */
+.form-control {
+    width: 500px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+.form-group-current-image{
+    display: flex;
+}
+
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 3px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+}
+
+.dot.active {
+    background: #e60033;
+}
+/* ==============================
+   画像プレビュー表示部分
+   ============================== */
+.image-block,
+.image-upload-block {
+    width: 250px;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 200px;
+}
+
+/* ==============================
+   画像の共通スタイル
+   ============================== */
+.form-group {
+    margin-bottom: 25px;
+}
+.current-image-item,
+.image-preview {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+.form-subtitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #5F5F5F;
+    border-bottom: #ccc 1px solid;
+    margin-top: 30px;
+}
+.form-label {
+    font-weight: bold;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 10px;
+    display: unset;
+}
+
+/* ==============================
+   ドットスタイル
+   ============================== */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+.carousel-dots .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 3px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+}
+.carousel-dots .dot.active {
+    background: #e60033;
+}
+
+/* ==============================
+   プレビュー画像全体の枠
+   ============================== */
+.carousel-preview-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    margin-bottom: 5px;
+}
+
+/* ==============================
+   ボタンの部分
+   ============================== */
+.custom-file-label {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #e60033;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+/* ==============================
+   現在画像の画像一覧
+   ============================== */
+.current-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/* 画像表示部分の共通サイズ指定 */
+.current-image img,
+.image-preview,
+#carousel-preview-box img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+}
+
+/* プレビュー枠自体もサイズ固定 */
+#carousel-preview-box {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed #aaa;
+    border-radius: 10px;
+    background-color: #fafafa;
+    margin-bottom: 8px;
+}
+/* ==============================
+   複数の現在画像が縦に並ぶときの調整
+   ============================== */
+.current-image-item {
+    margin: 5px 0;
+}
+.form-group-current-image {
+    justify-content: center;
+    gap: 3rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+.product-image {
+    width: 150px;
+    height: 150px;
+    background-color: #ddd;
+    object-fit: cover;
+}
+
+#carousel-dots {
+    margin-top: 8px;
+    text-align: center;
+}
+
+#carousel-dots .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 4px;
+    background: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#carousel-dots .dot.active {
+    background: #e60033;
+}
+
+/* ==============================
+   ファイル選択ボタン
+   ============================== */
+
+.custom-file-label {
+    display: inline-block;
+    background-color: #e60033;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: -0.5rem;
+    text-align: center;
+}
+
+.hidden-file {
+    display: none;
+}
+/* ==============================
+    カテゴリースタイル
+   ============================== */
+/*-------------------------------
+ カテゴリースタイル（複数選択対応）
+------------------------------*/
+.category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.category-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e60033;
+    border-radius: 20px;
+    color: #e60033;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.category-tag span {
+    display: inline-block;
+    padding: 6px 12px;
+}
+
+/* チェックされた場合のスタイル（複数選択対応） */
+.category-tag input[type="checkbox"]:checked+span {
+    background-color: #e60033;
+    color: #fff;
+    border-radius: 20px;
+}
+
+/*-------------------------------
+ 更新ボタンスタイル
+------------------------------*/
+.submit-button {
+    background-color: #ff4d4d;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    width: 200px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #e53e3e;
+}
+
+.center {
+    text-align: center;
+}
+
+/*-------------------------------
+ 削除ボタンスタイル
+------------------------------*/
+
+
+.btn {
+    padding: 14px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 30px;
+    margin-right: 50px;
+}
+
+.btn-primary {
+    background-color: #f66;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #999;
+    color: white;
+}
+
+
+/*-------------------------------
+ 画像プレビューのスタイル
+------------------------------*/
+
+#preview-box {
+    margin-top: 10px;
+}
+
+#preview-img {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 5px;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 5px;
+}
+
+.carousel-dots span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.carousel-dots span.active {
+    background-color: #e60033;
+}
+/*-------------------------------
+エラーメッセージのスタイル
+------------------------------*/
+.validation-errors {
+    background-color: #ffe6e6;
+    color: #d60000;
+    border: 1px solid #d60000;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+}
+
+.validation-errors ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.text-danger {
+    color: #d60000;
+    margin-top: 5px;
+    text-align: right;
+}
