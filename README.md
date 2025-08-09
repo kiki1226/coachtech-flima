@@ -102,5 +102,5 @@ erDiagram
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
-\```**
+```markdown
 
