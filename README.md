@@ -30,6 +30,21 @@
 
 
 ## ER図
+
+```markdown
+## ER図
+```mermaid
+erDiagram
+  USERS ||--o{ PRODUCTS : "owns"
+  USERS ||--o{ COMMENTS : "writes"
+  USERS ||--o{ LIKES : "likes"
+  USERS ||--o{ ADDRESSES : "has"
+
+  PRODUCTS ||--o{ PRODUCT_IMAGES : "has"
+  PRODUCTS ||--o{ COMMENTS : "has"
+  PRODUCTS ||--o{ LIKES : "has"
+  PRODUCTS }o--o{ CATEGORIES : "tagged"
+  
 ```mermaid
 erDiagram
   USERS ||--o{ PRODUCTS : "owns"
