@@ -30,6 +30,7 @@
 
 
 ## ER図
+```mermaid
 erDiagram
   USERS ||--o{ PRODUCTS : "owns"
   USERS ||--o{ COMMENTS : "writes"
@@ -101,4 +102,5 @@ erDiagram
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
+\```**
 
