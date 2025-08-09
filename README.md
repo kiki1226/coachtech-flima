@@ -44,7 +44,7 @@ erDiagram
   PRODUCTS ||--o{ COMMENTS : "has"
   PRODUCTS ||--o{ LIKES : "has"
   PRODUCTS }o--o{ CATEGORIES : "tagged"
-  
+
 ```mermaid
 erDiagram
   USERS ||--o{ PRODUCTS : "owns"
@@ -117,5 +117,5 @@ erDiagram
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
-```markdown
+
 
