@@ -28,9 +28,31 @@
     nginx 1.22.x
     jQuery 3.7.x
 
-
 ## ER図
+
+本アプリのテーブル構造（色・フォントをカスタムした Mermaid 版）です。
+
 ```mermaid
+%% カスタムテーマ（GitHubでも有効）
+%% - theme: base をベースに色やフォントを上書き
+%% - ダーク/ライト両方で見やすい配色
+%% 必要ならカラーコードは好きな色に変えてOK
+%% 参考: https://mermaid.js.org/config/theming.html#theme-variables
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Helvetica Neue, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'",
+    "primaryColor":   "#F0F7FF",   /* エンティティ背景 */
+    "primaryBorderColor": "#4B9EFF",/* 枠線色 */
+    "primaryTextColor":   "#0B306B",/* 表タイトル文字 */
+    "secondaryColor": "#FFFFFF",    /* セル背景 */
+    "tertiaryColor":  "#E8F2FF",    /* タイトル帯背景 */
+    "lineColor":      "#6A8CA6",    /* リレーション線 */
+    "edgeLabelBackground":"#ffffff",/* 関係ラベルの背景 */
+    "nodeBorder":     "#4B9EFF"
+  }
+}}%%
+
 erDiagram
   USERS ||--o{ PRODUCTS : "owns"
   USERS ||--o{ COMMENTS : "writes"
@@ -43,62 +65,73 @@ erDiagram
   PRODUCTS }o--o{ CATEGORIES : "tagged"
 
   USERS {
-    BIGINT id PK
-    VARCHAR name
-    VARCHAR email
-    VARCHAR password
-    VARCHAR avatar
-    BOOLEAN is_profile_set
-    VARCHAR zipcode
-    VARCHAR address
-    VARCHAR building
+    BIGINT   id PK
+    VARCHAR  name
+    VARCHAR  email
+    VARCHAR  password
+    VARCHAR  avatar
+    BOOLEAN  is_profile_set
+    VARCHAR  zipcode
+    VARCHAR  address
+    VARCHAR  building
     DATETIME email_verified_at
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
 
   PRODUCTS {
-    BIGINT id PK
-    BIGINT user_id FK
-    VARCHAR name
-    INT price
-    TEXT description
-    VARCHAR condition
-    VARCHAR image_path
-    BIGINT buyer_id
+    BIGINT   id PK
+    BIGINT   user_id FK
+    VARCHAR  name
+    INT      price
+    TEXT     description
+    VARCHAR  condition
+    VARCHAR  image_path
+    BIGINT   buyer_id
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
 
   PRODUCT_IMAGES {
-    BIGINT id PK
-    BIGINT product_id FK
-    VARCHAR image_path
+    BIGINT   id PK
+    BIGINT   product_id FK
+    VARCHAR  image_path
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
 
   CATEGORIES {
-    BIGINT id PK
-    VARCHAR name
+    BIGINT   id PK
+    VARCHAR  name
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
 
   COMMENTS {
-    BIGINT id PK
-    BIGINT user_id FK
-    BIGINT product_id FK
-    TEXT body
+    BIGINT   id PK
+    BIGINT   user_id FK
+    BIGINT   product_id FK
+    TEXT     body
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
 
   LIKES {
-    BIGINT id PK
-    BIGINT user_id FK
-    BIGINT product_id FK
+    BIGINT   id PK
+    BIGINT   user_id FK
+    BIGINT   product_id FK
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
+
+  ADDRESSES {
+    BIGINT   id PK
+    BIGINT   user_id FK
+    VARCHAR  zipcode
+    VARCHAR  address
+    VARCHAR  building
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+  }
+```
 
