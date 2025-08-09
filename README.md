@@ -42,7 +42,6 @@ erDiagram
   PRODUCTS ||--o{ LIKES : "has"
   PRODUCTS }o--o{ CATEGORIES : "tagged"
 
-  %% テーブル定義
   USERS {
     BIGINT id PK
     VARCHAR name
@@ -102,5 +101,4 @@ erDiagram
     TIMESTAMP created_at
     TIMESTAMP updated_at
   }
-
 
