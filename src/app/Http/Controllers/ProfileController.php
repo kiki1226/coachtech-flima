@@ -107,8 +107,13 @@ class ProfileController extends Controller
     // 住所変更画面（address.blade.php）
     public function editAddress(Product $product)
     {
-        $user = auth()->user();
-        return view('address.address', compact('user', 'product'));
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // ← ここを 'address.address' に固定（editは使わない）
+        return view('address.address', [
+            'user'       => $user,
+            'productId'  => $product->id,  
+        ]);
     }
 
     public function updateAddress(Request $request)

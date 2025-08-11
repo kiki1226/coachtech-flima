@@ -1,6 +1,6 @@
 <?php
 
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-// Feature / Unit のテストは Laravel の TestCase で起動する
-uses(TestCase::class)->in('Feature', 'Unit');
+// これで Feature/ 配下のテストはすべて自動でマイグレーション実行
+uses(RefreshDatabase::class)->in('Feature');

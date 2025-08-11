@@ -1,4 +1,4 @@
-@extends('layouts.authenticated')
+@extends('layouts.app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/create.css') }}">
@@ -56,30 +56,21 @@
 
         {{-- カテゴリー（複数選択） --}}
         <div class="form-group">
-            <label class="form-label">カテゴリー（複数選択可）</label>
-            <div class="category-tags">
-                @foreach (config('categories') as $id => $name)
-                    <label class="category-tag">
-                        <input
-                            type="checkbox"
-                            name="category_ids[]"
-                            value="{{ $id }}"
-                            {{ is_array(old('category_ids')) && in_array($id, old('category_ids')) ? 'checked' : '' }}
-                            hidden
-                        >
-                        <span>{{ $name }}</span>
-                    </label>
-                @endforeach
-            </div>
-
-            <input type="hidden" name="force_error" value="">
-
-            @error('category_ids')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
+        <label class="form-label">カテゴリー（複数選択可）</label>
+        <div class="category-tags">
+            @foreach ($categories as $category)
+            <label class="category-tag">
+                <input type="checkbox" name="category_ids[]" value="{{ $category->id }}"
+                {{ in_array($category->id, old('category_ids', [])) ? 'checked' : '' }} hidden>
+                <span>{{ $category->name }}</span>
+            </label>
+            @endforeach
         </div>
 
-
+        @error('category_ids')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
+        </div>
 
         {{-- 商品の状態 --}}
         <div class="form-group">

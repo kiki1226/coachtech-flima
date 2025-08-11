@@ -12,7 +12,7 @@ class PurchaseController extends Controller
 {
     public function redirectToStripe(PurchaseRequest $request)
     {
-        dd(env('STRIPE_SECRET'));
+        
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $paymentMethod = $request->input('payment_method');

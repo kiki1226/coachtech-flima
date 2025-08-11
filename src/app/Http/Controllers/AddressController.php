@@ -5,35 +5,41 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
+use App\Models\User;
 
 class AddressController extends Controller
 {
-    public function edit(Product $product)
+    public function edit($id, Request $request)
+        {
+            $user = User::findOrFail($id);
+            $productId = $request->query('product_id'); // GETパラメータから取得
+
+            return view('address.edit', [
+                'user' => $user,
+                'productId' => $productId
+            ]);
+        }
+    public function update(Request $request, int $id)
     {
-        $user = Auth::user();
-        return view('address.edit', [
-            'user' => $user,
-            'product' => $product
+        $validated = $request->validate([
+            'zipcode'    => ['required','string'],
+            'address'    => ['required','string'],
+            'building'   => ['nullable','string'],
+            'product_id' => ['nullable','integer'], // ← 必須ではなくしておく
         ]);
+
+        $user = User::findOrFail($id);
+        $user->zipcode  = $validated['zipcode'];
+        $user->address  = $validated['address'];
+        $user->building = $validated['building'] ?? null;
+        $user->save();
+
+        if (!empty($validated['product_id'])) {
+            return redirect()->route('products.purchase', ['product' => $validated['product_id']])
+                            ->with('success', '住所を更新しました。');
+        }
+        // product_id が無いときは元画面へ
+        return back()->with('success', '住所を更新しました。');
     }
-
-    public function update(Request $request, Product $product)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'zipcode' => 'required',
-            'address' => 'required',
-            'building' => 'nullable',
-        ]);
-
-        $user->update([
-            'zipcode' => $request->zipcode,
-            'address' => $request->address,
-            'building' => $request->building,
-        ]);
-
-        return redirect()->route('products.purchase', ['product' => $product->id])
-                         ->with('success', '住所を更新しました');
-    }
+    
 }

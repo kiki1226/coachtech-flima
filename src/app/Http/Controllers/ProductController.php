@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 use App\Models\ProductImage;
 use App\Http\Requests\ExhibitionRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -84,7 +86,7 @@ class ProductController extends Controller
         $product = Product::with(['categories', 'comments.user', 'productImages'])
             ->withCount(['likes', 'comments'])
             ->findOrFail($item_id);
-
+        $product = \App\Models\Product::with(['comments.user'])->findOrFail($item_id);      
         $liked = false;
         if (auth()->check()) {
             $liked = $product->likes()->where('user_id', auth()->id())->exists();
@@ -100,53 +102,94 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        // 商品データ作成
-        $product = new Product();
-        $product->name = $validated['name'];
-        $product->price = $validated['price'];
-        $product->description = $validated['description'];
-        $product->condition = $validated['condition'];
-        $product->user_id = Auth::id();
+        // 画像ファイル（有効なものだけ）
+        $files = collect($request->file('images') ?? [])
+            ->filter(fn($f) => $f && $f->isValid())
+            ->values();
 
-        // 画像処理
-        $images = $request->file('images');
         $storedPaths = [];
 
-        if ($images && count($images) > 0) {
-            foreach ($images as $index => $image) {
-                $path = $image->store('uploads/products', 'public');
-                $fullPath = 'storage/' . $path;
+        DB::transaction(function () use ($validated, $files, &$storedPaths) {
+            $product = new Product();
+            $product->user_id     = Auth::id();
+            $product->name        = $validated['name'];
+            $product->price       = $validated['price'];
+            $product->description = $validated['description'] ?? null;
+            $product->features    = $validated['features']    ?? null;
+            $product->condition   = $validated['condition']   ?? null;
 
-                // 1枚目はメイン画像として保存
-                if ($index === 0) {
-                    $product->image_path = $fullPath;
+            // 画像保存：'public'ディスク。DBには 'uploads/products/xxx.jpg' を保存
+            if ($files->count() > 0) {
+                foreach ($files as $idx => $file) {
+                    $path = $file->store('uploads/products', 'public'); // storage/app/public/...
+                    if ($idx === 0) {
+                        $product->image_path = $path; // 代表画像（'uploads/...'）
+                    }
+                    $storedPaths[] = $path;
                 }
-
-                $storedPaths[] = $fullPath;
+            } else {
+                // 未選択ならダミー画像
+                $product->image_path = 'uploads/products/no-image.png';
             }
-        } else {
-            // 画像が未選択の場合、ダミー画像を設定
-            $product->image_path = 'uploads/products/no-image.png';
-        }
 
-        $product->save();
+            $product->save();
 
-        // カテゴリー紐付け
-        if (isset($validated['category_ids'])) {
-            $product->categories()->attach($validated['category_ids']);
-        }
+            // カテゴリ紐付け
+            if (!empty($validated['category_ids'])) {
+                $product->categories()->sync($validated['category_ids']);
+            }
 
-        // 複数画像保存（ProductImageテーブル）
-        foreach ($storedPaths as $path) {
-            ProductImage::create([
-                'product_id' => $product->id,
-                'image_path' => $path,
-            ]);
-        }
+            // 複数画像テーブル
+            foreach ($storedPaths as $p) {
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => $p, // 'uploads/...'
+                ]);
+            }
+        });
 
-        return redirect()->route('mypage.index')->with('success', '商品を出品しました');
+        return redirect()->route('mypage.index', ['tab' => 'sell'])
+            ->with('success', '商品を出品しました');
     }
 
+    /**
+     * 商品更新
+     */
+    public function update(ExhibitionRequest $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $product->fill($request->only(['name','brand','description','price','features','condition']));
+        $product->save();
+
+        // 画像保存（新規がある場合）
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $idx => $image) {
+                if (!$image->isValid()) continue;
+
+                $path = $image->store('uploads/products', 'public'); // 'uploads/...'
+
+                if ($idx === 0) {
+                    $product->image_path = $path; // 代表も統一
+                    $product->save();
+                }
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => $path,
+                ]);
+            }
+        }
+
+        // カテゴリ更新
+        if ($request->filled('category_ids')) {
+            $product->categories()->sync($request->category_ids);
+        }
+
+        // （削除分岐は別アクションに分けた方が安全）
+
+        return redirect()->route('mypage.index')->with('success', '商品を更新しました');
+    }
 
     /**
      * 商品編集画面
@@ -159,51 +202,6 @@ class ProductController extends Controller
         return view('products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * 商品更新
-     */
-    public function update(ExhibitionRequest $request, $id)
-    {
-        $product = Product::findOrFail($id);
-
-        // 更新
-        $product->fill($request->only(['name', 'brand', 'description', 'price']));
-        $product->save();
-
-        // 画像保存（新規画像がある場合のみ）
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $index => $image) {
-                if ($image->isValid()) {
-                    $path = $image->store('uploads/products', 'public');
-                    $imagePath = 'storage/' . $path;
-
-                    if ($index === 0) {
-                        $product->image_path = $imagePath;
-                        $product->save();
-                    }
-
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $imagePath,
-                    ]);
-                }
-            }
-        }
-
-        // カテゴリー更新（多対多）
-        if ($request->filled('category_ids')) {
-            $product->categories()->sync($request->category_ids);
-        }
-
-        return redirect()->route('mypage.index')->with('success', '商品を更新しました');
-        
-        if ($request->input('action') === 'delete') {
-        // 削除処理
-        $product = Product::findOrFail($id);
-        $product->delete();
-        return redirect()->route('products.index')->with('success', '商品を削除しました');
-        }
-    }
 
     /**
      * 商品を購入

@@ -1,4 +1,4 @@
-@extends('layouts.authenticated')
+@extends('layouts.app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/show.css') }}">
@@ -15,20 +15,29 @@
 
 <div class="product-detail-container">
     <div class="product-image">
-        <div class="product-image-section" style="position: relative;">
-            <img id="main-product-image" src="{{ asset($product->image_path) }}" alt="商品画像" width="400">
+  <div class="product-image-section" style="position: relative;">
+    @php
+      $mainExists = $product->image_path && Storage::disk('public')->exists($product->image_path);
+      $mainUrl = $mainExists ? Storage::url($product->image_path) : asset('images/noimage.png');
+    @endphp
+    <img id="main-product-image" src="{{ $mainUrl }}" alt="商品画像" width="400">
 
-            @if ($product->is_sold)
-                <span class="sold-label">SOLD</span>
-            @endif
-        </div>
-        <h3>その他の画像</h3>
-        <div class="thumbnail-list">
-            @foreach ($product->productImages as $subImage)
-                <img class="thumbnail" src="{{ asset($subImage->image_path) }}" alt="サブ画像" width="80">
-            @endforeach
-        </div>
-    </div>
+    @if ($product->is_sold)
+      <span class="sold-label">SOLD</span>
+    @endif
+  </div>
+
+  <h3>その他の画像</h3>
+  <div class="thumbnail-list">
+    @foreach ($product->productImages as $subImage)
+      @php
+        $thumbExists = $subImage->image_path && Storage::disk('public')->exists($subImage->image_path);
+        $thumbUrl = $thumbExists ? Storage::url($subImage->image_path) : asset('images/noimage.png');
+      @endphp
+      <img class="thumbnail" src="{{ $thumbUrl }}" alt="サブ画像" width="80" loading="lazy">
+    @endforeach
+  </div>
+</div>
 
 
     <div class="product-info-section">
@@ -97,17 +106,31 @@
 
 
         <div class="comments-section">
-            <form action="{{ route('comments.store', $product->id) }}" method="POST" class="comment-form">
-                @csrf
-                <label for="comment" class="comment-label">商品へのコメント</label>
-                <textarea name="comment" placeholder="コメントを入力してください">{{ old('comment') }}</textarea>
-                @if ($errors->has('comment'))
-                    <p class="error-message" style="color: red;">{{ $errors->first('comment') }}</p>
-                @endif
-                <button type="submit">コメントを送信する</button>
-            </form>
+        <form action="{{ route('comments.store', ['id' => $product->id]) }}" method="POST" class="comment-form">
+            @csrf
+            <label for="comment" class="comment-label">商品へのコメント</label>
+            <textarea name="comment" id="comment" placeholder="コメントを入力してください">{{ old('comment') }}</textarea>
+            @error('comment')
+            <p class="error-message" style="color:red;">{{ $message }}</p>
+            @enderror
+            <button type="submit">コメントを送信する</button>
+        </form>
+
+        <h3>コメント ({{ $product->comments->count() }})</h3>
+
+        @foreach ($product->comments as $comment)
+            <div class="comment-block">
+            <div class="comment-avatar">
+                <img src="{{ asset($comment->user->avatar ?? 'uploads/avatars/no-image.png') }}"
+                    alt="プロフィール画像" class="comment-avatar">
+            </div>
+            <p class="comment-username">{{ $comment->user->name ?? 'ゲスト' }}</p>
+            <div class="comment-content">
+                <p class="comment-text">{{ $comment->comment }}</p>
+            </div>
+            </div>
+        @endforeach
         </div>
-    </div>
 </div>
 
 @endsection

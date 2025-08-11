@@ -24,7 +24,7 @@ class CommentsTableSeeder extends Seeder
             \App\Models\Comment::create([
                 'user_id' => $user->id,
                 'product_id' => $product->id,
-                'body' => 'すごく使いやすかったです！',
+                'comment' => 'すごく使いやすかったです！',
             ]);
         }
     }

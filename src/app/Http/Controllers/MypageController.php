@@ -30,7 +30,7 @@ class MypageController extends Controller
     public function show()
     {
         $user = Auth::user();
-        return view('mypage.index', compact('user'));
+        return view('users.mypage', compact('user'));
     }
-        
+    
 }

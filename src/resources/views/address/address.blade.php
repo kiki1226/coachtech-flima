@@ -9,9 +9,10 @@
 <div class="address-change-container">
     <h2>住所の変更</h2>
 
-    <form action="{{ route('address.update.purchase', ['product' => $product->id]) }}" method="POST">
-        @csrf
-
+    <form action="{{ route('address.update', ['id' => $user->id]) }}" method="POST">
+    @csrf
+    @method('PUT')
+    <input type="hidden" name="product_id" value="{{ $productId ?? request('product_id') }}">
         <div class="form-group">
             <label for="zipcode">郵便番号</label>
             <input type="text" name="zipcode" value="{{ old('zipcode', $user->zipcode) }}">

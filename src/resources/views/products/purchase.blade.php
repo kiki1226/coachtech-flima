@@ -1,4 +1,4 @@
-@extends('layouts.authenticated')
+@extends('layouts.app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/purchase.css') }}">
@@ -12,7 +12,11 @@
 
         <div class="product-info">
             <div class="product-image">
-                <img src="{{ asset($product->image_path) }}" alt="商品画像">
+                @php
+                    $exists = $product->image_path && Storage::disk('public')->exists($product->image_path);
+                    $url = $exists ? Storage::url($product->image_path) : asset('images/noimage.png');
+                    @endphp
+                    <img src="{{ $url }}" alt="商品画像" width="400">
             </div>
             <div class="product-details">
                 <h3 class="product-name">{{ $product->name }}</h3>

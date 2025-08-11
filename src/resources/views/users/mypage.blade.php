@@ -1,4 +1,4 @@
-@extends('layouts.authenticated')
+@extends('layouts.app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/mypage.css') }}">
@@ -44,12 +44,20 @@
     @forelse ($products as $product)
         <div class="product-card" style="position: relative;">
             <a href="{{ $tab === 'sell' ? route('products.edit', $product->id) : route('products.show', ['item_id' => $product->id]) }}">
-                @if ($product->image_path && file_exists(public_path($product->image_path)))
-                    <img src="{{ asset($product->image_path) }}" alt="商品画像">
-                @else
-                    <img src="{{ asset('uploads/products/no-image.png') }}" alt="商品画像">
-                @endif
-
+                @php
+                    $path = $product->image_path;
+                    $url  = asset('images/noimage.png'); // デフォルト
+                    if ($path) {
+                        if (Storage::disk('public')->exists($path)) {
+                            // storage/app/public にある（アップロード画像）
+                            $url = Storage::url($path);   // => /storage/...
+                        } elseif (file_exists(public_path($path))) {
+                            // public/uploads にある（fixturesなど）
+                            $url = asset($path);          // => /uploads/...
+                        }
+                    }
+                @endphp
+                <img src="{{ $url }}" alt="{{ $product->name }}" loading="lazy">
                 <p>{{ $product->name }}</p>
 
                 @if ($tab === 'sell' && $product->is_sold)

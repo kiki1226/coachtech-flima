@@ -20,22 +20,27 @@
 
 
 <div class="product-list">
-    
-    @foreach ($products as $product)
-        <div class="product-item" style="position: relative;">
-            <div class="image-wrapper">
-                <img src="{{ asset($product->image_path) }}" alt="{{ $product->name }}">
+  @forelse ($products as $product)
+    <div class="product-item" style="position: relative;">
+      <div class="image-wrapper">
+        @php
+            $ok = $product->image_path && Storage::disk('public')->exists($product->image_path);
+            $url = $ok ? Storage::url($product->image_path) : asset('images/noimage.png');
+        @endphp
+            <img src="{{ $url }}" alt="{{ $product->name }}" loading="lazy">
 
-                @if ($product->is_sold)
-                    <span class="sold-label">SOLD</span>
-                @endif
-            </div>
 
-            <p class="product-name">{{ $product->name }}</p>
-            <p class="product-price">¥{{ number_format($product->price) }}</p>
-            <a href="{{ route('products.show', ['item_id' => $product->id]) }}" class="detail-link">詳細を見る</a>
-        </div>
-    @endforeach
+        @if ($product->is_sold)
+          <span class="sold-label">SOLD</span>
+        @endif
+      </div>
+
+      <p class="product-name">{{ $product->name }}</p>
+      <p class="product-price">¥{{ number_format($product->price) }}</p>
+      <a href="{{ route('products.show', ['item_id' => $product->id]) }}" class="detail-link">詳細を見る</a>
+    </div>
+  @empty
+    <p class="empty">該当する商品はありません。</p>
+  @endforelse
 </div>
-
 @endsection

@@ -24,16 +24,21 @@ class ExhibitionRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name' => ['required'],
-            'description' => ['required', 'max:255'],
-            'images' => ['required', 'array'],
-            'images.*' => ['image', 'mimes:jpeg,png'],
-            'category_ids' => ['required', 'array'],
-            'category_ids.*' => ['integer', Rule::in(array_keys(config('categories')))],
-            'condition' => ['required'],
-            'price' => ['required', 'numeric', 'min:0'],
-            // 'force_error' => ['required'],
+            return [
+            'name'         => ['required','string','max:100'],
+            'description'  => ['required','string','max:255'],
+
+            // 画像は未選択OK（ダミー画像にフォールバックする運用）
+            'images'       => ['nullable','array','max:6'],
+            'images.*'     => ['image','mimes:jpeg,jpg,png','max:5120'],
+
+            // ← ここを修正：DBのIDを許可
+            'category_ids'   => ['required','array','min:1'],
+            'category_ids.*' => ['integer','exists:categories,id'],
+
+            'condition'    => ['required','string'],
+            'price'        => ['required','integer','min:1'],
+            'features'     => ['nullable','string','max:255'],
         ];
     }
     public function attributes(): array

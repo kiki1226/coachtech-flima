@@ -17,13 +17,13 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('avatar')->nullable(); // プロフィール画像
-            $table->string('zipcode')->nullable(); // 郵便番号
-            $table->string('address')->nullable(); // 住所
-            $table->string('building')->nullable(); // 建物名
-            $table->boolean('is_profile_set')->default(false); // 初期設定済みフラグ
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('avatar')->nullable();
+            $table->string('zipcode')->nullable();
+            $table->string('address')->nullable();
+            $table->string('building')->nullable();
+            $table->boolean('is_profile_set')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory; 
+use Illuminate\Support\Facades\Storage;
 use App\Models\ProductImage;
 use App\Models\Like;
 use App\Models\Comment;
@@ -41,7 +42,7 @@ class Product extends Model
     // コメントリレーション
     public function comments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(\App\Models\Comment::class);
     }
 
     // カテゴリリレーション
@@ -59,5 +60,13 @@ class Product extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    // 画像のフルパスを取得
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->image_path && Storage::disk('public')->exists($this->image_path)) {
+            return Storage::url($this->image_path); // /storage/products/xxx.jpg
+        }
+        return asset('images/noimage.png');
     }
 }
