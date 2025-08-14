@@ -92,8 +92,12 @@ Route::middleware('auth')->group(function () {
     // いいね一括
     Route::post('/products/bulk-like', [LikeController::class, 'bulkLike'])->name('products.bulk-like');
     
-    
+    // 購入完了ページ
+    Route::get('/purchase/complete/{product}', [PurchaseController::class, 'complete'])
+    ->name('purchase.complete');
 });
+
+
 
 // ========== 4) 認証 + メール認証 必須（/mypage はココに1本だけ） ==========
 Route::middleware(['auth','verified'])->group(function () {

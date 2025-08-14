@@ -1,0 +1,3 @@
+docker/mysql/data/
+src/public/uploads/
+src/storage/

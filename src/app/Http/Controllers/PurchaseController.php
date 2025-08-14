@@ -33,20 +33,22 @@ class PurchaseController extends Controller
                 'quantity' => 1,
             ]],
             'mode' => 'payment',
-            'success_url' => route('purchase.complete', ['id' => $productId]),
+            'success_url' => route('purchase.complete', ['product' => $product->id]),
             'cancel_url' => url()->previous(),
         ]);
 
         return redirect($session->url);
     }
 
-    public function complete($id)
+    public function complete(\App\Models\Product $product)
     {
-        $product = Product::findOrFail($id);
-        $product->buyer_id = auth()->id();
-        $product->save();
+        // ここは更新（UPDATE）だけ。新規作成はしない
+        if (auth()->check() && is_null($product->buyer_id)) {
+            $product->buyer_id = auth()->id();
+            $product->save(); // ← UPDATEになる
+        }
 
-        return view('products.complete');
+        return view('products.complete', compact('product'));
     }
 }
 
