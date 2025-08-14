@@ -21,6 +21,9 @@
     Dusk                          : php artisan dusk
     Dusk一部指定                    : php artisan dusk --filter=*****
 
+### キャッシュ(仮ナンバー)
+    カード番号：4242 4242 4242 4242
+
 ## URL（開発環境）
     トップページ：http://localhost/
     ユーザー登録：http://localhost/register
@@ -59,84 +62,122 @@
 }}%%
 
 erDiagram
-  USERS ||--o{ PRODUCTS : "owns"
-  USERS ||--o{ COMMENTS : "writes"
-  USERS ||--o{ LIKES : "likes"
-  USERS ||--o{ ADDRESSES : "has"
-
-  PRODUCTS ||--o{ PRODUCT_IMAGES : "has"
-  PRODUCTS ||--o{ COMMENTS : "has"
-  PRODUCTS ||--o{ LIKES : "has"
-  PRODUCTS }o--o{ CATEGORIES : "tagged"
-
   USERS {
-    BIGINT   id PK
-    VARCHAR  name
-    VARCHAR  email
-    VARCHAR  password
-    VARCHAR  avatar
-    BOOLEAN  is_profile_set
-    VARCHAR  zipcode
-    VARCHAR  address
-    VARCHAR  building
-    DATETIME email_verified_at
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
-  }
-
-  PRODUCTS {
-    BIGINT   id PK
-    BIGINT   user_id FK
-    VARCHAR  name
-    INT      price
-    TEXT     description
-    VARCHAR  condition
-    VARCHAR  image_path
-    BIGINT   buyer_id
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
-  }
-
-  PRODUCT_IMAGES {
-    BIGINT   id PK
-    BIGINT   product_id FK
-    VARCHAR  image_path
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
+    bigint id PK
+    varchar name
+    varchar email
+    timestamp email_verified_at
+    varchar password
+    varchar avatar
+    varchar zipcode
+    varchar address
+    varchar building
+    tinyint  is_profile_set
+    varchar remember_token
+    timestamp created_at
+    timestamp updated_at
   }
 
   CATEGORIES {
-    BIGINT   id PK
-    VARCHAR  name
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
+    bigint id PK
+    varchar name
+    timestamp created_at
+    timestamp updated_at
   }
 
-  COMMENTS {
-    BIGINT   id PK
-    BIGINT   user_id FK
-    BIGINT   product_id FK
-    TEXT     body
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
+  PRODUCTS {
+    bigint id PK
+    bigint user_id FK  "seller"
+    bigint category_id FK "※単一カテゴリ用(任意)"
+    varchar name
+    varchar brand
+    int     price
+    text    description
+    varchar image_path
+    text    features
+    varchar condition
+    tinyint is_sold
+    bigint  buyer_id FK "※購入者(任意)"
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  PRODUCT_IMAGES {
+    bigint id PK
+    bigint product_id FK
+    varchar image_path
+    smallint sort_order
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  CATEGORY_PRODUCTS {
+    bigint product_id FK
+    bigint category_id FK
   }
 
   LIKES {
-    BIGINT   id PK
-    BIGINT   user_id FK
-    BIGINT   product_id FK
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
+    bigint id PK
+    bigint user_id FK
+    bigint product_id FK
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  COMMENTS {
+    bigint id PK
+    bigint user_id FK
+    bigint product_id FK
+    text   comment
+    timestamp created_at
+    timestamp updated_at
   }
 
   ADDRESSES {
-    BIGINT   id PK
-    BIGINT   user_id FK
-    VARCHAR  zipcode
-    VARCHAR  address
-    VARCHAR  building
-    TIMESTAMP created_at
-    TIMESTAMP updated_at
+    bigint id PK
+    bigint user_id FK
+    varchar recipinet_name  "※typo: recipient_name"
+    varchar phone
+    varchar zipcode
+    varchar address
+    varchar building
+    tinyint is_default
+    timestamp created_at
+    timestamp updated_at
   }
+
+  PURCHASES {
+    bigint id PK
+    bigint user_id FK         "buyer"
+    bigint product_id FK
+    bigint shipping_address_id FK
+    varchar payment_method
+    varchar status
+    timestamp purchased_at
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  %% 1対多
+  USERS ||--o{ PRODUCTS         : sells
+  USERS ||--o{ ADDRESSES        : has
+  USERS ||--o{ LIKES            : likes
+  USERS ||--o{ COMMENTS         : writes
+  USERS ||--o{ PURCHASES        : buys
+
+  PRODUCTS ||--o{ PRODUCT_IMAGES : has
+  PRODUCTS ||--o{ LIKES          : gets
+  PRODUCTS ||--o{ COMMENTS       : receives
+  PRODUCTS ||--o{ PURCHASES      : sold_in
+
+  %% 多対多（中間テーブル）
+  PRODUCTS ||--o{ CATEGORY_PRODUCTS : ""
+  CATEGORIES ||--o{ CATEGORY_PRODUCTS : ""
+
+  %% 参照
+  PURCHASES }o--|| ADDRESSES : ships_to
+  PRODUCTS  }o--|| USERS     : buyer_via_buyer_id
+  PRODUCTS  }o--|| CATEGORIES: single_category_via_category_id
+
 ```
 
