@@ -91,7 +91,10 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
-
+.nav-button-syutten {
+    border: #F8F8F8;
+    color: black;
+}
 .nav-button-search {
     width: 100px;
 }
@@ -166,18 +169,20 @@ main {
 /* 右側ナビ（ログイン／ログアウト／マイページ） */
 .header-right {
     gap: 12px;
+    color: white;
+    text-align: center;
 }
 
 .header-right a {
     display: inline-flex;
     align-items: center;
     height: 34px;
-    padding: 0 12px;
     color: #fff;
+    padding: 0 12px;
     text-decoration: none;
     font-weight: 600;
     border-radius: 8px;
-    background: transparent;
+   
 }
 
 .header-right a:hover {

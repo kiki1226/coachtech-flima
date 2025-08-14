@@ -1,3 +1,4 @@
+{{-- resources/views/users/mypage.blade.php --}}
 @extends('layouts.app')
 
 @section('css')
@@ -6,6 +7,7 @@
 
 @section('content')
 <script src="{{ asset('js/image-preview.js') }}"></script>
+
 
 {{-- パンくず --}}
 <div class="breadcrumb">
@@ -42,31 +44,43 @@
 {{-- 商品一覧 --}}
 <div class="product-list">
     @forelse ($products as $product)
+        @php
+            $path = $product->image_path;
+            $url  = asset('images/noimage.png'); // デフォルト
+
+            if ($path) {
+                // "storage/..." を "uploads/..." に正規化
+                $publicKey = normalizePublicPath($path);
+
+                if ($publicKey && Storage::disk('public')->exists($publicKey)) {
+                    // storage/app/public にある（アップロード画像）
+                    $url = Storage::url($publicKey);      // => /storage/...
+                } elseif (file_exists(public_path($path))) {
+                    // public直下（例: public/uploads/... に直置きやfixtures）
+                    $url = asset($path);                   // => /uploads/...
+                }
+            }
+
+            // SOLD判定（is_sold が無い場合は buyer_id で代替）
+            $isSold = isset($product->is_sold) ? $product->is_sold : !empty($product->buyer_id);
+        @endphp
+
         <div class="product-card" style="position: relative;">
-            <a href="{{ $tab === 'sell' ? route('products.edit', $product->id) : route('products.show', ['item_id' => $product->id]) }}">
-                @php
-                    $path = $product->image_path;
-                    $url  = asset('images/noimage.png'); // デフォルト
-                    if ($path) {
-                        if (Storage::disk('public')->exists($path)) {
-                            // storage/app/public にある（アップロード画像）
-                            $url = Storage::url($path);   // => /storage/...
-                        } elseif (file_exists(public_path($path))) {
-                            // public/uploads にある（fixturesなど）
-                            $url = asset($path);          // => /uploads/...
-                        }
-                    }
-                @endphp
+            <a href="{{ $tab === 'sell'
+                        ? route('products.edit', $product->id)
+                        : route('products.show', ['item_id' => $product->id]) }}">
                 <img src="{{ $url }}" alt="{{ $product->name }}" loading="lazy">
                 <p>{{ $product->name }}</p>
 
-                @if ($tab === 'sell' && $product->is_sold)
+                @if ($tab === 'sell' && $isSold)
                     <span class="sold-label">SOLD</span>
                 @endif
             </a>
         </div>
     @empty
-        
+        <p class="empty-text">
+            {{ $tab === 'sell' ? '出品した商品はありません。' : '購入した商品はありません。' }}
+        </p>
     @endforelse
 
     {{-- 出品タブだけ出品ボタンを表示 --}}

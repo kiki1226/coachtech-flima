@@ -38,7 +38,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // 出品商品
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(\App\Models\Product::class);
     }
 
     // いいね

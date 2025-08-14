@@ -107,13 +107,10 @@ class ProfileController extends Controller
     // 住所変更画面（address.blade.php）
     public function editAddress(Product $product)
     {
-        $user = \Illuminate\Support\Facades\Auth::user();
-
-        // ← ここを 'address.address' に固定（editは使わない）
-        return view('address.address', [
-            'user'       => $user,
-            'productId'  => $product->id,  
-        ]);
+        $user = Auth::user();
+        $productId = $product->id;
+        
+        return view('address.address', compact('user', 'product'));
     }
 
     public function updateAddress(Request $request)
@@ -133,7 +130,36 @@ class ProfileController extends Controller
 
         return redirect()->route('address.edit')->with('success', '住所を更新しました');
     }
-    
+    /**
+     * 住所更新（購入フロー）
+     * ルート: address.update.from.purchase
+     * {id} はユーザーID
+     */
+    public function updateFromPurchase(AddressRequest $request, int $id)
+    {
+        // 本人チェック
+        if ($id !== Auth::id()) {
+            abort(403);
+        }
+
+        $v = $request->validated();
+
+        $user = User::findOrFail($id);
+        $user->fill([
+            'zipcode'  => $v['zipcode'],
+            'address'  => $v['address'],
+            'building' => $v['building'] ?? null,
+        ])->save();
+
+        // 購入ページへ戻す（hidden の product_id を使う）
+        if ($request->filled('product_id')) {
+            return redirect()
+                ->route('products.purchase', ['product' => $request->input('product_id')])
+                ->with('success', '住所を更新しました。');
+        }
+
+        return back()->with('success', '住所を更新しました。');
+    }
 
 
 }

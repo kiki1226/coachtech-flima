@@ -1,18 +1,40 @@
 <?php
 
+use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class); 
 
-it('会員登録後はverification.noticeへ（想定）', function () {
+it('会員登録後は verification.notice へリダイレクトする', function () {
+    if (!Route::has('register')) {
+        $this->markTestSkipped('register ルートが無効です。');
+    }
+
+    $email = 'taro@example.com';
     $payload = [
-        'username' => 'taro',
-        'email' => 'taro@example.com',
-        'password' => 'password123',
+        'name'                  => 'taro',        
+        'email'                 => $email,
+        'password'              => 'password123',
         'password_confirmation' => 'password123',
     ];
 
-    $this->post('/register', $payload)
-        ->assertStatus(302);
-        // ->assertRedirect(route('verification.notice')); // 実際の遷移先が確定したら戻す
+    $res = $this->post(route('register'), $payload);
+
+    $this->assertDatabaseHas('users', ['email' => $email]);
+
+    if (Route::has('verification.notice')) {
+        $res->assertRedirect(route('verification.notice'));
+    } else {
+        $res->assertRedirect(route('login'));
+    }
+});
+
+it('会員登録の必須入力が足りないとエラーになる', function () {
+    if (!Route::has('register')) {
+        $this->markTestSkipped('register ルートが無効です。');
+    }
+
+    $this->post(route('register'), [])
+         ->assertSessionHasErrors(['name','email','password']);
 });

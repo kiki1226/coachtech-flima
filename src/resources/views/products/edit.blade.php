@@ -135,7 +135,7 @@
     </div>
 
     {{-- ボタン --}}
-    <div class="form-group center" style="display: flex; gap: 10px; justify-content: center;">
+    <div class="form-group center" style="display: flex; justify-content: center;">
         <button type="submit" name="action" value="update" class="submit-button">更新する</button>
     
     </form>

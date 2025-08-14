@@ -2,35 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Comment;
 use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\CommentRequest;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class CommentController extends Controller
 {
-    /**
-     * コメントを保存
-     */
-    public function store(CommentRequest $request, \App\Models\Product $product = null)
-        {
-            // どこから来ても product_id が取れるように網を広く
-            $productId = $product?->id
-                ?? $request->input('product_id')
-                ?? $request->route('id')        // route('comments.store', ['id'=>...]) 対応
-                ?? $request->query('id');       // /comments?id=... にも対応
+    public function store(Request $request, Product $product): RedirectResponse
+    {
+        // テストやフォームの差異を吸収：body でも comment でも受ける
+        $text = $request->input('comment', $request->input('body'));
+        $request->merge(['comment' => $text]);
 
-            abort_unless($productId, 422, 'product_id is required');
+        // バリデーション（空/255超を弾く）
+        $validated = $request->validate([
+            'comment' => ['required', 'string', 'max:255'],
+        ]);
 
-            \App\Models\Comment::create([
-                'user_id'    => auth()->id(),
-                'product_id' => $productId,
-                'comment'    => $request->input('comment'),
-            ]);
+        // リレーション経由で作成（product_id は自動で入る）
+        $product->comments()->create([
+            'user_id' => $request->user()->id,
+            'comment' => $validated['comment'],
+        ]);
 
-            return back(); // テストは 302 期待
-        }
-
+        // 一般的に 302 リダイレクト
+        return redirect()
+            ->route('products.show', $product)   // or back()
+            ->with('status', 'コメントを投稿しました。');
+    }
 }
-

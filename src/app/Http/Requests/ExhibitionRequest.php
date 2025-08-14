@@ -36,7 +36,7 @@ class ExhibitionRequest extends FormRequest
             'category_ids'   => ['required','array','min:1'],
             'category_ids.*' => ['integer','exists:categories,id'],
 
-            'condition'    => ['required','string'],
+            'condition'        => ['required', Rule::in(['良好','目立った傷や汚れなし','やや傷や汚れあり','状態が悪い'])],
             'price'        => ['required','integer','min:1'],
             'features'     => ['nullable','string','max:255'],
         ];

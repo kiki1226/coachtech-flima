@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 use App\Models\ProductImage;
 use App\Http\Requests\ExhibitionRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -18,54 +19,48 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $keyword = $request->input('keyword');
-        $onlyLiked = $request->has('mylist') && auth()->check();
+        $keyword   = $request->input('keyword');
+        $onlyLiked = $request->boolean('mylist');
 
-        // ログイン中なら自分の商品は除く
-        $excludeUserId = auth()->check() ? auth()->id() : null;
+        // 未認証でマイリスト要求なら空
+        if ($onlyLiked && ! auth()->check()) {
+            return view('products.index', [
+                'products'  => collect(),
+                'onlyLiked' => true,
+                'keyword'   => $keyword,
+            ]);
+        }
 
-        // ベースクエリ（自分の商品を除外）
+        // 自分の商品は除外
+        $excludeUserId = auth()->id(); // 未認証なら null
         $baseQuery = Product::query();
         if ($excludeUserId) {
             $baseQuery->where('user_id', '!=', $excludeUserId);
         }
 
-        // 検索結果を取得（キーワードがある場合）
-        $searchResults = collect();
-        if ($keyword) {
-            $searchResults = (clone $baseQuery)
-                ->where('name', 'like', '%' . $keyword . '%')
-                ->get();
-        }
-
-        // いいね済み商品を取得（ログインしている場合）
-        $likedProducts = collect();
-        if (auth()->check()) {
-            $likedProductIds = auth()->user()->likes()->pluck('product_id');
-            $likedProducts = (clone $baseQuery)
-                ->whereIn('id', $likedProductIds)
-                ->get();
-        }
-
         if ($onlyLiked) {
-            // 検索結果 + いいね済み商品 をマージ（重複排除）
-            $products = $searchResults->merge($likedProducts)->unique('id')->values();
-        } else {
-            // 通常のおすすめ一覧（キーワードがある場合はフィルタ）
-            $query = Product::query();
-            if ($excludeUserId) {
-                $query->where('user_id', '!=', $excludeUserId);
-            }
+            // ✅ いいねIDに絞り、さらにキーワードでも絞る（積集合）
+            $likedIds = auth()->user()->likes()->pluck('product_id');
+
+            $query = (clone $baseQuery)->whereIn('id', $likedIds);
             if ($keyword) {
-                $query->where('name', 'like', '%' . $keyword . '%');
+                $query->where('name', 'like', "%{$keyword}%");
+            }
+            $products = $query->get();
+
+        } else {
+            // 通常タブ：必要ならキーワードだけ適用
+            $query = (clone $baseQuery);
+            if ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
             }
             $products = $query->get();
         }
 
         return view('products.index', [
-            'products' => $products,
+            'products'  => $products,
             'onlyLiked' => $onlyLiked,
-            'keyword' => $keyword
+            'keyword'   => $keyword,
         ]);
     }
 
@@ -83,74 +78,89 @@ class ProductController extends Controller
      */
     public function show($item_id)
     {
-        $product = Product::with(['categories', 'comments.user', 'productImages'])
-            ->withCount(['likes', 'comments'])
+        $product = \App\Models\Product::with([
+                'categories',
+                'comments.user',
+                'productImages',
+            ])
+            ->withCount(['likes', 'comments'])   // ★ これを追加
             ->findOrFail($item_id);
-        $product = \App\Models\Product::with(['comments.user'])->findOrFail($item_id);      
-        $liked = false;
-        if (auth()->check()) {
-            $liked = $product->likes()->where('user_id', auth()->id())->exists();
-        }
+
+        $liked = auth()->check()
+            ? auth()->user()->likes()->where('product_id', $product->id)->exists()
+            : false;
 
         return view('products.show', compact('product', 'liked'));
     }
+
     
     /**
      * 商品を保存
      */
-    public function store(ExhibitionRequest $request)
+    public function store(Request $request)
     {
-        $validated = $request->validated();
 
-        // 画像ファイル（有効なものだけ）
-        $files = collect($request->file('images') ?? [])
-            ->filter(fn($f) => $f && $f->isValid())
-            ->values();
+        // ExhibitionRequestのルールをここで使う
+        $form = new \App\Http\Requests\ExhibitionRequest();
 
-        $storedPaths = [];
+        $validator = Validator::make(
+            $request->all(),
+            $form->rules(),
+            method_exists($form, 'messages') ? $form->messages() : [],
+            method_exists($form, 'attributes') ? $form->attributes() : []
+        );
 
-        DB::transaction(function () use ($validated, $files, &$storedPaths) {
-            $product = new Product();
-            $product->user_id     = Auth::id();
-            $product->name        = $validated['name'];
-            $product->price       = $validated['price'];
-            $product->description = $validated['description'] ?? null;
-            $product->features    = $validated['features']    ?? null;
-            $product->condition   = $validated['condition']   ?? null;
+        if ($validator->fails()) {
+            return redirect()->route('products.create')->withErrors($validator)->withInput();
+        }
 
-            // 画像保存：'public'ディスク。DBには 'uploads/products/xxx.jpg' を保存
-            if ($files->count() > 0) {
-                foreach ($files as $idx => $file) {
-                    $path = $file->store('uploads/products', 'public'); // storage/app/public/...
-                    if ($idx === 0) {
-                        $product->image_path = $path; // 代表画像（'uploads/...'）
+        $validated = $validator->validated();
+        $images = $request->file('images', []);
+
+        try {
+            DB::transaction(function () use ($validated, $images) {
+                $product = new Product();
+                $product->user_id     = auth()->id();
+                $product->name        = $validated['name'];
+                $product->description = $validated['description'];
+                $product->price       = $validated['price'];
+                $product->condition   = $validated['condition'] ?? null;
+                $product->brand       = $validated['brand'] ?? null;
+                $product->image_path  = null;
+                $product->save();
+
+                // 画像保存（1枚目をメイン）
+                foreach ($images as $i => $image) {
+                    $path = $image->store('uploads/products', 'public'); // "uploads/..."
+                    $publicPath = 'storage/'.$path; // 既存の表示運用に合わせる
+
+                    if ($i === 0) {
+                        $product->image_path = $publicPath;
+                        $product->save();
                     }
-                    $storedPaths[] = $path;
+
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $publicPath,
+                    ]);
                 }
-            } else {
-                // 未選択ならダミー画像
-                $product->image_path = 'uploads/products/no-image.png';
-            }
 
-            $product->save();
+                // カテゴリー
+                if (!empty($validated['category_ids'])) {
+                    $product->categories()->attach($validated['category_ids']);
+                }
+            });
+        } catch (\Throwable $e) {
+            \Log::error('Product store failed: '.$e->getMessage());
+            return redirect()->route('products.create')
+                ->withInput()
+                ->withErrors('出品に失敗しました。もう一度お試しください。');
+        }
 
-            // カテゴリ紐付け
-            if (!empty($validated['category_ids'])) {
-                $product->categories()->sync($validated['category_ids']);
-            }
-
-            // 複数画像テーブル
-            foreach ($storedPaths as $p) {
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'image_path' => $p, // 'uploads/...'
-                ]);
-            }
-        });
-
-        return redirect()->route('mypage.index', ['tab' => 'sell'])
-            ->with('success', '商品を出品しました');
+        // ✅ 成功時は必ずマイページ（出品タブ）へ戻す
+        return redirect('/mypage?tab=sell')->with('success', '商品を出品しました');
     }
+
 
     /**
      * 商品更新

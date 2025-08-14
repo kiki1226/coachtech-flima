@@ -2,17 +2,24 @@
 
 ## 環境構築
 ### Dockerビルド
-    git clone git@github.com:kiki1226/coachtech-flema.git
-    docker-compose up -d --build
-    docker-compose exec php bash
+    GitHab      : git clone git@github.com:kiki1226/coachtech-flema.git
+    起動          : docker-compose up -d
+    php             : docker-compose exec php bash
+    停止            : docker compose down
+    
 ### Laravel環境構築
-    composer install
-    cp .env.example .env 
-    php artisan key:generate
-    php artisan migrate
-    php artisan db:seed
+    インストール    :  php composer install
+    APP_KEY 生成    :  php artisan key:generate
+    ストレージ公開    :  php artisan storage:link
+    .env 用意       :cp .env.example .env 
+    マイグレーション  : php artisan migrate
+    シーディング     :  php artisan migrate --seed
+
 ### テストコード
-    docker compose exec php php artisan test
+    Feature / Unit テスト（PHPUnit）: php artisan test
+    Feature一部指定                 : php artisan test --filter=*****
+    Dusk                          : php artisan dusk
+    Dusk一部指定                    : php artisan dusk --filter=*****
 
 ## URL（開発環境）
     トップページ：http://localhost/

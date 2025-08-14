@@ -15,13 +15,10 @@
 
 <div class="product-detail-container">
     <div class="product-image">
-  <div class="product-image-section" style="position: relative;">
-    @php
-      $mainExists = $product->image_path && Storage::disk('public')->exists($product->image_path);
-      $mainUrl = $mainExists ? Storage::url($product->image_path) : asset('images/noimage.png');
-    @endphp
-    <img id="main-product-image" src="{{ $mainUrl }}" alt="商品画像" width="400">
-
+    <div class="product-image-section" style="position: relative;">
+        @php $mainUrl = toPublicUrl($product->image_path); @endphp
+        <img id="main-product-image" src="{{ $mainUrl }}" alt="商品画像" width="400">
+    
     @if ($product->is_sold)
       <span class="sold-label">SOLD</span>
     @endif
@@ -30,11 +27,8 @@
   <h3>その他の画像</h3>
   <div class="thumbnail-list">
     @foreach ($product->productImages as $subImage)
-      @php
-        $thumbExists = $subImage->image_path && Storage::disk('public')->exists($subImage->image_path);
-        $thumbUrl = $thumbExists ? Storage::url($subImage->image_path) : asset('images/noimage.png');
-      @endphp
-      <img class="thumbnail" src="{{ $thumbUrl }}" alt="サブ画像" width="80" loading="lazy">
+      @php $thumbUrl = toPublicUrl($subImage->image_path); @endphp
+        <img class="thumbnail" src="{{ $thumbUrl }}" alt="サブ画像" width="80" loading="lazy">
     @endforeach
   </div>
 </div>
@@ -85,19 +79,18 @@
 
 
         <div class="comments-section">
-            <h3>コメント ({{ count($product->comments) }})</h3>
+            <h3>コメント ({{ $product->comments->count() }})</h3>
 
             @foreach ($product->comments as $comment)
                 <div class="comment-block">
-                    <div class="comment-avatar">
-                    <img src="{{ asset($comment->user->avatar ?? 'uploads/avatars/no-image.png') }}" alt="プロフィール画像" class="comment-avatar">
-
-                        
-                    </div>
-                         <p class="comment-username">{{ $comment->user->name }}</p>    
+                <div class="comment-avatar">
+                    @php $avatar = toPublicUrl($comment->user->avatar ?? 'uploads/avatars/no-image.png'); @endphp
+                    <img src="{{ $avatar }}" alt="プロフィール画像" class="comment-avatar">
+                </div>
+                <p class="comment-username">{{ $comment->user->name ?? 'ゲスト' }}</p>
                 </div>
                 <div class="comment-content">
-                        <p class="comment-text">{{ $comment->body }}</p>
+                    <p class="comment-text">{{ $comment->comment }}</p>
                 </div>
             @endforeach
         </div>
@@ -106,7 +99,7 @@
 
 
         <div class="comments-section">
-        <form action="{{ route('comments.store', ['id' => $product->id]) }}" method="POST" class="comment-form">
+        <form action="{{ route('comments.store', $product) }}" method="POST" class="comment-form">
             @csrf
             <label for="comment" class="comment-label">商品へのコメント</label>
             <textarea name="comment" id="comment" placeholder="コメントを入力してください">{{ old('comment') }}</textarea>
@@ -116,20 +109,7 @@
             <button type="submit">コメントを送信する</button>
         </form>
 
-        <h3>コメント ({{ $product->comments->count() }})</h3>
-
-        @foreach ($product->comments as $comment)
-            <div class="comment-block">
-            <div class="comment-avatar">
-                <img src="{{ asset($comment->user->avatar ?? 'uploads/avatars/no-image.png') }}"
-                    alt="プロフィール画像" class="comment-avatar">
-            </div>
-            <p class="comment-username">{{ $comment->user->name ?? 'ゲスト' }}</p>
-            <div class="comment-content">
-                <p class="comment-text">{{ $comment->comment }}</p>
-            </div>
-            </div>
-        @endforeach
+        
         </div>
 </div>
 

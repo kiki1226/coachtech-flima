@@ -48,6 +48,13 @@
                 <a href="{{ route('register') }}" class="header-link">会員登録</a>
             @endguest
         </div>
+        <div class="header-syuppin">
+            @auth
+                @if (Auth::user()->hasVerifiedEmail() && Auth::user()->is_profile_set)
+                    <a href="{{ route('products.create') }}" class="nav-button-syutten">出品</a>
+                @endif
+            @endauth
+        </div>
     </header>
 
     <main class="main-content">

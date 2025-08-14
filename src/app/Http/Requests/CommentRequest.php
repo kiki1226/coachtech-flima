@@ -11,9 +11,9 @@ class CommentRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -21,13 +21,14 @@ class CommentRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'comment' => 'required|string|max:255',
+            'comment' => ['required', 'string', 'max:255'], 
         ];
     }
-    public function messages()
+
+    public function messages(): array
     {
         return [
             'comment.required' => 'コメントを入力してください',

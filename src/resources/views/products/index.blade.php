@@ -24,11 +24,25 @@
     <div class="product-item" style="position: relative;">
       <div class="image-wrapper">
         @php
-            $ok = $product->image_path && Storage::disk('public')->exists($product->image_path);
-            $url = $ok ? Storage::url($product->image_path) : asset('images/noimage.png');
-        @endphp
-            <img src="{{ $url }}" alt="{{ $product->name }}" loading="lazy">
+            // use 文は不要。Storage はファサード別名でそのまま呼べます
+            $path = $product->image_path;
+            $url  = asset('images/noimage.png'); // デフォルト画像
 
+            if ($path) {
+                // ← ここでグローバルヘルパーを呼ぶだけ（Blade内で関数定義しない）
+                $publicKey = normalizePublicPath($path); // "storage/..." → "uploads/..."
+
+                if ($publicKey && Storage::disk('public')->exists($publicKey)) {
+                    // storage/app/public にある（アップロード画像）
+                    $url = Storage::url($publicKey);     // => /storage/...
+                } elseif (file_exists(public_path($path))) {
+                    // public直下（fixtures等）
+                    $url = asset($path);                 // => /uploads/...
+                }
+            }
+        @endphp
+
+    <img src="{{ $url }}" alt="{{ $product->name }}">
 
         @if ($product->is_sold)
           <span class="sold-label">SOLD</span>
