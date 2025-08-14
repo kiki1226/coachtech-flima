@@ -26,9 +26,7 @@
 
             @endif
         @endauth
-        @auth
-            <div class="welcome">ようこそ、{{ Auth::user()->username ?? Auth::user()->email }} さん</div>
-        @endauth
+        
         </div>
         <div class="header-right">
             @auth
