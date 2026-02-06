@@ -24,8 +24,8 @@ function previewImage(event) {
     <h2>プロフィール設定</h2>
 
     <div class="profile-form">
-    <form method="POST" action="{{ route('profile.store') }}" enctype="multipart/form-data">
-    @csrf
+        <form method="POST" action="{{ route('profile.store') }}" enctype="multipart/form-data">
+        @csrf
 
             <div class="image-upload">
                 <div class="profile-icon" id="preview">

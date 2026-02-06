@@ -31,6 +31,7 @@ class AddressRequest extends FormRequest
         'product_id' => ['nullable','integer','exists:products,id'],
         ];
     }
+    
     protected function prepareForValidation(): void
     {
         // 前後空白を除去（全角スペースも）
@@ -47,6 +48,7 @@ class AddressRequest extends FormRequest
             'building' => $trim($this->input('building')),
         ]);
     }
+
     public function attributes(): array
     {
         return [
@@ -55,7 +57,8 @@ class AddressRequest extends FormRequest
             'building' => '建物名・部屋番号',
         ];
     }
-public function messages(): array
+
+    public function messages(): array
     {
         return [
             'zipcode.required' => '郵便番号を入力してください。',

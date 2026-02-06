@@ -41,6 +41,7 @@ class ExhibitionRequest extends FormRequest
             'features'     => ['nullable','string','max:255'],
         ];
     }
+
     public function attributes(): array
     {
         return [
@@ -54,6 +55,7 @@ class ExhibitionRequest extends FormRequest
             'price' => '価格',
         ];
     }
+    
     public function messages(): array
     {
         return [

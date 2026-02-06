@@ -28,6 +28,7 @@ class PurchaseRequest extends FormRequest
             'shipping_address' => ['required'],
         ];
     }
+
     public function attributes(): array
     {
         return [
@@ -35,6 +36,7 @@ class PurchaseRequest extends FormRequest
             'shipping_address' => '配送先',
         ];
     }
+    
     public function messages(): array
     {
         return [
