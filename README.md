@@ -1,8 +1,27 @@
-# coachtech-flema
+# coachtech-flima
+
+## 概要
+Laravelで作成したフリマアプリです。（商品一覧 / 詳細 / いいね / 検索 / 購入フロー など）
+
+## 主な機能
+- 会員登録 / ログイン（メール認証があれば一言）
+- 商品一覧 / 商品詳細
+- 検索
+- いいね（マイリスト）
+- コメント
+- 購入フロー（住所入力 / 支払い方法選択 など）
+- 出品 / 編集 / 削除
+
+## 使用技術
+- PHP / Laravel
+- MySQL
+- Docker（Nginx + PHP + MySQL）
+- （使っていれば）jQuery / Blade / CSS
 
 ## 環境構築
 ### Dockerビルド
-    GitHab      : git clone git@github.com:kiki1226/coachtech-flema.git
+    GitHab      : git clone https://github.com/kiki1226/coachtech-flima.git
+    cd coachtech-flima
     起動          : docker-compose up -d
     php             : docker-compose exec php bash
     停止            : docker compose down
