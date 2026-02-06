@@ -1,3 +1,4 @@
 docker/mysql/data/
 src/public/uploads/
 src/storage/
+docker/mysql/data/
